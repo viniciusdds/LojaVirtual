@@ -2,4 +2,30 @@
     <string name="app_name">LojaVirtual</string>
     <string name="title_activity_login_screen">LoginScreen</string>
     <string name="title_activity_validator">Validator</string>
+    <string name="title_activity_cadastro_screen">CadastroScreen</string>
+    <string name="title_activity_usuario_repository">UsuarioRepository</string>
+    <string name="title_activity_usuario_api">UsuarioApi</string>
+    <string name="title_activity_usuario_cadastro_request">UsuarioCadastroRequest</string>
+    <string name="title_activity_cadastro_view_model">CadastroViewModel</string>
+    <string name="title_activity_login_view_model">LoginViewModel</string>
+    <string name="title_activity_api_service">ApiService</string>
+    <string name="title_activity_usuario">Usuario</string>
+    <string name="title_activity_retrofit_instance">RetrofitInstance</string>
+    <string name="title_activity_cadastro_view_model_factory">CadastroViewModelFactory</string>
+    <string name="title_activity_phone_visual_transformation">PhoneVisualTransformation</string>
+    <string name="title_activity_usuario_api_service">UsuarioApiService</string>
+    <string name="title_activity_login_view_model_factory">LoginViewModelFactory</string>
+    <string name="title_activity_usuario_response">UsuarioResponse</string>
+    <string name="title_activity_redefinir_senha_screen">RedefinirSenhaScreen</string>
+    <string name="title_activity_redefinir_senha_view_model">RedefinirSenhaViewModel</string>
+    <string name="title_activity_redefinir_senha_view_model_factory">
+        RedefinirSenhaViewModelFactory
+    </string>
+    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_produtos_screen">ProdutosScreen</string>
+    <string name="title_activity_categorias_screen">CategoriasScreen</string>
+    <string name="title_activity_pedidos_screen">PedidosScreen</string>
+    <string name="title_activity_produto">Produto</string>
+    <string name="title_activity_produto_repository">ProdutoRepository</string>
+    <string name="title_activity_produto_view_model">ProdutoViewModel</string>
 </resources>

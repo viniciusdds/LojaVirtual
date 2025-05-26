@@ -25,15 +25,20 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.VisualTransformation
 import br.com.aurora.lojavirtual.utils.Validator
+import br.com.aurora.lojavirtual.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, modifier: Modifier){
+fun LoginScreen( loginViewModel: LoginViewModel, onLoginSuccess: () -> Unit, onCadastroClick: () -> Unit,  onRedefinirSenhaClick: () -> Unit, modifier: Modifier = Modifier){
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
     var senhaVisivel by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val loginMessage by loginViewModel.loginMessage.collectAsState()
 
     Column(
         modifier = Modifier
@@ -72,28 +77,66 @@ fun LoginScreen(onLoginSuccess: () -> Unit, modifier: Modifier){
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if(errorMessage.isNotEmpty()){
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = errorMessage, color = Color.Red)
+        }
+
         Button(
             onClick = {
                 if (!Validator.isEmailValid(email)) {
                     errorMessage = "E-mail inválido"
+                    loginViewModel.limparMensagem()
                     return@Button
                 }
 
-                if(email == "admin@teste.com" && senha == "123456"){
-                    errorMessage = ""
-                    onLoginSuccess()
-                }else{
-                    errorMessage = "E-mail ou senha incorretos."
+                if (!Validator.isPasswordStrong(senha)) {
+                    errorMessage = "Senha fraca: mínimo 6 caracteres, letra e número"
+                    loginViewModel.limparMensagem()
+                    return@Button
                 }
+
+                loginViewModel.login(email, senha, onLoginSuccess)
+                errorMessage = ""
+
+//                if(email == "admin@teste.com" && senha == "123456"){
+//                    errorMessage = ""
+//                    onLoginSuccess()
+//                }else{
+//                    errorMessage = "E-mail ou senha incorretos."
+//                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Entrar")
         }
 
-        if(errorMessage.isNotEmpty()){
+        if (loginMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = errorMessage, color = Color.Red)
+            Text(
+                text = loginMessage,
+                color = if (loginMessage.contains("sucesso", true)) Color.Green else Color.Red
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                onCadastroClick()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Cadastre-se")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(
+            onClick = { onRedefinirSenhaClick() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Esqueceu a senha?", color = Color.Blue)
         }
 
     }

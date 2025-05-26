@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +14,126 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LojaVirtual"
         tools:targetApi="31">
+        <activity
+            android:name=".viewmodel.ProdutoViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_produto_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".repository.ProdutoRepository"
+            android:exported="false"
+            android:label="@string/title_activity_produto_repository"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.Produto"
+            android:exported="false"
+            android:label="@string/title_activity_produto"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.PedidosScreen"
+            android:exported="false"
+            android:label="@string/title_activity_pedidos_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.CategoriasScreen"
+            android:exported="false"
+            android:label="@string/title_activity_categorias_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.ProdutosScreen"
+            android:exported="false"
+            android:label="@string/title_activity_produtos_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.HomeScreen"
+            android:exported="false"
+            android:label="@string/title_activity_home_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.RedefinirSenhaViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_redefinir_senha_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.RedefinirSenhaViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_redefinir_senha_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.RedefinirSenhaScreen"
+            android:exported="false"
+            android:label="@string/title_activity_redefinir_senha_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.UsuarioResponse"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_response"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.ui.theme.LoginViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_login_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.UsuarioApiService"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_api_service"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".utils.PhoneVisualTransformation"
+            android:exported="false"
+            android:label="@string/title_activity_phone_visual_transformation"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.CadastroViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_cadastro_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.RetrofitInstance"
+            android:exported="false"
+            android:label="@string/title_activity_retrofit_instance"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.Usuario"
+            android:exported="false"
+            android:label="@string/title_activity_usuario"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.ApiService"
+            android:exported="false"
+            android:label="@string/title_activity_api_service"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.LoginViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_login_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.CadastroViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_cadastro_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.UsuarioCadastroRequest"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_cadastro_request"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.UsuarioApi"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_api"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".repository.UsuarioRepository"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_repository"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.CadastroScreen"
+            android:exported="false"
+            android:label="@string/title_activity_cadastro_screen"
+            android:theme="@style/Theme.LojaVirtual" />
         <activity
             android:name=".utils.Validator"
             android:exported="false"
