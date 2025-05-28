@@ -28,11 +28,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.VisualTransformation
+import br.com.aurora.lojavirtual.model.Usuario
 import br.com.aurora.lojavirtual.utils.Validator
 import br.com.aurora.lojavirtual.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen( loginViewModel: LoginViewModel, onLoginSuccess: () -> Unit, onCadastroClick: () -> Unit,  onRedefinirSenhaClick: () -> Unit, modifier: Modifier = Modifier){
+fun LoginScreen( loginViewModel: LoginViewModel, onLoginSuccess: (Usuario) -> Unit, onCadastroClick: () -> Unit,  onRedefinirSenhaClick: () -> Unit, modifier: Modifier = Modifier){
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var senhaVisivel by remember { mutableStateOf(false) }
@@ -96,7 +97,13 @@ fun LoginScreen( loginViewModel: LoginViewModel, onLoginSuccess: () -> Unit, onC
                     return@Button
                 }
 
-                loginViewModel.login(email, senha, onLoginSuccess)
+                loginViewModel.login(email, senha, { usuario ->
+                    if(usuario != null){
+                        onLoginSuccess(usuario)
+                    }else{
+                        errorMessage = "Erro: usuário inválido"
+                    }
+                })
                 errorMessage = ""
 
 //                if(email == "admin@teste.com" && senha == "123456"){

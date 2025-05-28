@@ -1,5 +1,6 @@
 package br.com.aurora.lojavirtual.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,18 +15,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.aurora.lojavirtual.R
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
+import br.com.aurora.lojavirtual.model.Usuario
+import br.com.aurora.lojavirtual.viewmodel.LoginViewModel
+import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
     navController: NavController,
+    usuario: Usuario?,
     onLogoutClick: () -> Unit
 ) {
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    Log.d("HomeScreen", "Usuário recebido: ${usuario?.id_usuario ?: "null"}")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -38,7 +47,9 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     TextButton(onClick = {
-                        navController.navigate("produtos")
+                        val categoriaId = 0 // por exemplo, ou pegue de uma lista
+                        val idUsuario = usuario?.id_usuario ?: ""
+                        navController.navigate("produtos/${categoriaId}/${idUsuario}")
                         scope.launch { drawerState.close() }
                     }
                     ) {
@@ -46,7 +57,8 @@ fun HomeScreen(
                     }
 
                     TextButton(onClick = {
-                        navController.navigate("categorias")
+                        val idUsuario = usuario?.id_usuario ?: ""
+                        navController.navigate("categorias/${idUsuario}")
                         scope.launch { drawerState.close() }
                     }) {
                         Text("Categorias")
@@ -64,8 +76,19 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
+
+
                 TopAppBar(
-                    title = { Text("Minha Loja") },
+                    title = {   // Verifica se o usuário não é nulo
+
+                        Text(
+                            text = "Bem-vindo, ${usuario?.nome ?: ""}!",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White,
+                            maxLines = 1,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch { drawerState.open() }

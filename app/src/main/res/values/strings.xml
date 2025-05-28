@@ -28,4 +28,12 @@
     <string name="title_activity_produto">Produto</string>
     <string name="title_activity_produto_repository">ProdutoRepository</string>
     <string name="title_activity_produto_view_model">ProdutoViewModel</string>
+    <string name="title_activity_categoria">Categoria</string>
+    <string name="title_activity_pedido_data">PedidoData</string>
+    <string name="title_activity_carrinho_drawer_content">CarrinhoDrawerContent</string>
+    <string name="title_activity_pedido_request">PedidoRequest</string>
+    <string name="title_activity_pedido_repository">PedidoRepository</string>
+    <string name="title_activity_pedido_view_model">PedidoViewModel</string>
+    <string name="title_activity_usuario_view_model">UsuarioViewModel</string>
+    <string name="title_activity_produto_view_model_factory">ProdutoViewModelFactory</string>
 </resources>

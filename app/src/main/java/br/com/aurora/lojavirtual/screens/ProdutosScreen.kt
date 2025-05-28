@@ -1,5 +1,7 @@
 package br.com.aurora.lojavirtual.screens
 
+import ProdutoViewModelFactory
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,16 +12,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import br.com.aurora.lojavirtual.model.Produto
-import br.com.aurora.lojavirtual.R
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,40 +26,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import br.com.aurora.lojavirtual.network.RetrofitInstance
+import br.com.aurora.lojavirtual.repository.ProdutoRepository
+import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProdutosScreen(
-    navController: NavController,
-    onLogoutClick: () -> Unit
+    categoriaId: Int,
+    idUsuario: String,
+    navController: NavController
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val repository = ProdutoRepository(RetrofitInstance.api) // ou da forma que usa
+    val viewModelFactory = ProdutoViewModelFactory(repository)
+
+    val produtoViewModel: ProdutoViewModel = viewModel(factory = viewModelFactory)
+    val produtos = produtoViewModel.produtos
+    var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
+    val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    var rightDrawerOpened by remember { mutableStateOf(false) }
 
-    var imagemSelecionada by remember { mutableStateOf<Int?>(null) }
+    Log.d("ProdutoScreen", "Usuário recebido: ${idUsuario ?: "null"}")
 
-    //Lista de produtos simulada
-    val produtos = remember {
-        mutableStateListOf(
-            Produto(1, "Camisa Polo", R.drawable.produto1, 59.90),
-            Produto(2, "Tênis Esportivo", R.drawable.produto2, 189.90),
-            Produto(3, "Calça Jeans", R.drawable.produto3, 129.90),
-            Produto(4, "Boné Estiloso", R.drawable.produto4, 49.90)
-        )
+    // Carregar produtos ao abrir ou quando categoria mudar
+    LaunchedEffect(categoriaId) {
+        produtoViewModel.carregarProdutos(categoriaId)
     }
 
-    val totalCarrinho by derivedStateOf {
-       produtos.sumOf{ it.quantidade }
-    }
-
+    Box {
+    // Drawer da esquerda (Menu)
     ModalNavigationDrawer(
-        drawerState = drawerState,
+        drawerState = leftDrawerState,
         drawerContent = {
             Surface(
                 color = Color(0xFF9932CC)
@@ -70,23 +77,23 @@ fun ProdutosScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     TextButton(onClick = {
-                        navController.navigate("produtos")
-                        scope.launch { drawerState.close() }
+                        navController.navigate("home")
+                        scope.launch { leftDrawerState.close() }
                     }
                     ) {
-                        Text("Produtos")
+                        Text("Inicial")
                     }
 
                     TextButton(onClick = {
-                        navController.navigate("categorias")
-                        scope.launch { drawerState.close() }
+                        navController.navigate("categorias/${idUsuario}")
+                        scope.launch { leftDrawerState.close() }
                     }) {
                         Text("Categorias")
                     }
 
                     TextButton(onClick = {
                         navController.navigate("pedidos")
-                        scope.launch { drawerState.close() }
+                        scope.launch { leftDrawerState.close() }
                     }) {
                         Text("Meus Pedidos")
                     }
@@ -99,7 +106,7 @@ fun ProdutosScreen(
                 TopAppBar(
                     title = { Text("Lista de Produtos") },
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }){
+                        IconButton(onClick = { scope.launch { leftDrawerState.open() } }){
                             Icon(Icons.Default.Menu, contentDescription = "Menu")
                         }
                     },
@@ -107,20 +114,17 @@ fun ProdutosScreen(
                         // Carrinho com badge
                         BadgedBox(
                             badge = {
-                                if(totalCarrinho > 0){
-                                    Badge { Text(totalCarrinho.toString()) }
+                                if(produtoViewModel.quantidadeTotal() > 0){
+                                    Badge { Text(produtoViewModel.quantidadeTotal().toString()) }
                                 }
-                            }
+                            },
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .clickable{
+                                    rightDrawerOpened = true
+                                }
                         ) {
-                           IconButton(onClick = {
-                                // ação futura para abrir carrinho
-                           }) {
-                               Icon(
-                                   imageVector = Icons.Default.ShoppingCart,
-                                   contentDescription = "Carrinho",
-                                   tint = Color.White
-                               )
-                           }
+                            Icon(Icons.Default.AddShoppingCart, contentDescription = "Carrinho")
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -136,25 +140,26 @@ fun ProdutosScreen(
                 ){}
             },
             containerColor = Color(0xFFFFFFFF)
-        ){ padding ->
+        ){ innerPadding  ->
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
-                    .padding(padding)
+                    .padding(innerPadding)
                     .padding(8.dp)
                     .background(Color.White)
                     .fillMaxSize(),
                 contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                items(produtos.size){ index ->
-                    val produto = produtos[index]
-
+                items(produtos){ produto  ->
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable{
+                                produtoSelecionado = produto
+                            },
                         colors = CardDefaults.cardColors(
                             containerColor = Color(0xFF9932CC) // Cor do TopBar
                         ),
@@ -164,19 +169,19 @@ fun ProdutosScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
-                                .background(Color.White),
+                                .background(Color.White)
+                                .clickable {
+                                    produtoSelecionado = produto
+                                },
                             contentAlignment = Alignment.Center
                         ){
                             Image(
-                                painter = painterResource(id = produto.imagemUrl),
+                                painter = painterResource(id = produto.imagemResId),
                                 contentDescription = produto.nome,
                                 modifier = Modifier
                                     .height(100.dp)
                                     .background(Color.White)
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        imagemSelecionada = produto.imagemUrl
-                                    },
+                                    .fillMaxWidth(),
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -185,16 +190,16 @@ fun ProdutosScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ){
                             Text(produto.nome, style = MaterialTheme.typography.titleMedium)
-                            Text("R$ %.2f".format(produto.preco), style =  MaterialTheme.typography.bodyMedium)
+                            Text("R$ ${produto.preco}", style =  MaterialTheme.typography.bodyMedium)
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically
                             ){
                                 IconButton(
                                     onClick = {
-                                        if(produto.quantidade > 0){
-                                            produtos[index] = produto.copy(quantidade = produto.quantidade - 1)
-                                        }
+                                       produtoViewModel.removerQuantidade(produto)
                                     },
                                     enabled = produto.quantidade > 0
                                 ) {
@@ -205,7 +210,7 @@ fun ProdutosScreen(
 
                                 IconButton(
                                     onClick = {
-                                        produtos[index] = produto.copy(quantidade = produto.quantidade + 1)
+                                       produtoViewModel.adicionarQuantidade(produto)
                                     }
                                 ) {
                                     Icon(Icons.Default.Add, contentDescription = "Adicionar")
@@ -217,9 +222,19 @@ fun ProdutosScreen(
             }
 
             // Modal com imagem ampliada
-            if(imagemSelecionada != null){
-                AnimatedVisibility(visible = imagemSelecionada != null) {
-                    Dialog(onDismissRequest = { imagemSelecionada = null }) {
+            produtoSelecionado?.let { produto ->
+                AnimatedVisibility(
+                    visible = produtoSelecionado != null,
+                    enter = scaleIn(
+                         initialScale = 0.5f,
+                         animationSpec = tween(durationMillis = 400)
+                    ) + fadeIn(animationSpec = tween(400)),
+                    exit = scaleOut(
+                        targetScale = 0.8f,
+                        animationSpec = tween(durationMillis = 250)
+                    ) + fadeOut(animationSpec = tween(250))
+                ) {
+                    Dialog(onDismissRequest = { produtoSelecionado = null }) {
                         Box(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -234,7 +249,7 @@ fun ProdutosScreen(
                             Column {
                                 Box(modifier = Modifier.fillMaxWidth()){
                                     IconButton(
-                                        onClick = { imagemSelecionada = null },
+                                        onClick = { produtoSelecionado = null },
                                         modifier = Modifier
                                             .align(Alignment.TopEnd)
                                             .padding(12.dp)
@@ -257,7 +272,7 @@ fun ProdutosScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Image(
-                                painter = painterResource(id = imagemSelecionada!!),
+                                painter = painterResource(id = produto.imagemResId),
                                 contentDescription = "Imagem Ampliada",
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -271,5 +286,58 @@ fun ProdutosScreen(
                 }
             }
         }
+      }
+
+        // Drawer da direita com fundo clicável para fechar ao tocar fora
+        AnimatedVisibility(
+            visible = rightDrawerOpened,
+            enter = slideInHorizontally(initialOffsetX = { it }),
+            exit = slideOutHorizontally(targetOffsetX = { it }),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f)) // Fundo escurecido
+                    .clickable { rightDrawerOpened = false } // Fecha ao clicar fora
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .width(250.dp)
+                        .wrapContentHeight()
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .clickable(enabled = false) {}, // Impede clique de fechar o drawer ao clicar dentro
+                    color = Color(0xFF9932CC),
+                    shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp),
+                    tonalElevation = 8.dp,
+                    shadowElevation = 8.dp,
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = "Carrinho",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White
+                        )
+
+                        Button(
+                            onClick = {
+                                // Ação de confirmar pedido
+                                rightDrawerOpened = false
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                        ) {
+                            Text("Confirmar Pedido", color = Color(0xFF9932CC))
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

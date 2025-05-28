@@ -1,5 +1,6 @@
 package br.com.aurora.lojavirtual.network
 
+import PedidoRequest
 import br.com.aurora.lojavirtual.model.Produto
 import br.com.aurora.lojavirtual.model.Usuario
 import br.com.aurora.lojavirtual.model.UsuarioResponse
@@ -29,4 +30,7 @@ interface ApiService {
 
     @GET("produtos")
     suspend fun getProdutos(): List<Produto>
+
+    @POST("salvar_pedido.php")
+    suspend fun salvarPedido(@Body pedido: PedidoRequest): Response<Unit>
 }

@@ -1,47 +1,39 @@
 package br.com.aurora.lojavirtual.screens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import br.com.aurora.lojavirtual.screens.ui.theme.LojaVirtualTheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import br.com.aurora.lojavirtual.model.Produto
+import androidx.compose.foundation.layout.Column
 
-class PedidosScreen : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            LojaVirtualTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting3(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PedidosScreen(pedidoConfirmado: List<Produto>?,  idUsuario: String) {
+
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Meus Pedidos") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF9932CC),
+                    titleContentColor = Color.White
+                )
+            )
         }
-    }
-}
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-@Composable
-fun Greeting3(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview3() {
-    LojaVirtualTheme {
-        Greeting3("Android")
+        }
     }
 }

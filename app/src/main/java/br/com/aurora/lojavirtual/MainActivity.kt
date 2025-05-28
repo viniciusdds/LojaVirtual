@@ -1,5 +1,6 @@
 package br.com.aurora.lojavirtual
 
+import ProdutoViewModelFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -16,6 +18,9 @@ import br.com.aurora.lojavirtual.screens.LoginScreen
 import br.com.aurora.lojavirtual.ui.theme.LojaVirtualTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import br.com.aurora.lojavirtual.model.Pedido
+import br.com.aurora.lojavirtual.model.Produto
+import br.com.aurora.lojavirtual.model.Usuario
 import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.UsuarioRepository
 import br.com.aurora.lojavirtual.screens.CategoriasScreen
@@ -29,12 +34,20 @@ import br.com.aurora.lojavirtual.viewmodel.LoginViewModel
 import br.com.aurora.lojavirtual.viewmodel.LoginViewModelFactory
 import br.com.aurora.lojavirtual.viewmodel.RedefinirSenhaViewModel
 import br.com.aurora.lojavirtual.viewmodel.RedefinirSenhaViewModelFactory
+import br.com.aurora.lojavirtual.viewmodel.UsuarioViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import br.com.aurora.lojavirtual.repository.ProdutoRepository
+import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
             LojaVirtualTheme {
                 val navController = rememberNavController()
                 val apiService = RetrofitInstance.api // sua instância do Retrofit
@@ -42,20 +55,21 @@ class MainActivity : ComponentActivity() {
                 val loginViewModel: LoginViewModel = viewModel(
                     factory = LoginViewModelFactory(repository)
                 )
-
+                val usuarioViewModel: UsuarioViewModel = viewModel()
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "produtos",
+                        startDestination = "login",
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable("login") {
                             LoginScreen(
                                 loginViewModel = loginViewModel,
-                                onLoginSuccess = {
+                                onLoginSuccess = {usuario ->
+                                    usuarioViewModel.setUsuario(usuario)
                                     // ação depois do login
                                     navController.navigate("home"){
                                         popUpTo("login"){ inclusive = true }
@@ -97,18 +111,46 @@ class MainActivity : ComponentActivity() {
                         }
                         @OptIn(ExperimentalMaterial3Api::class)
                         composable("home") {
-                            HomeScreen(
+                            val usuario by usuarioViewModel.usuario.collectAsState()
+                             HomeScreen(
                                 navController = navController,
-                                onLogoutClick = {
+                                 usuario = usuario, // Passa o usuário como parâmetro
+                                 onLogoutClick = {
+                                    usuarioViewModel.limparUsuario()
+                                    loginViewModel.limparMensagem()
                                     navController.navigate("login") {
                                         popUpTo("home") { inclusive = true } // Remove a Home da pilha
                                     }
                                 }
                             )
                         }
-                        composable("produtos") {
+                        composable(
+                            route = "produtos/{categoriaId}/{idUsuario}",
+                            arguments = listOf(
+                                navArgument("categoriaId") { type = NavType.IntType },
+                                navArgument("idUsuario") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val categoriaId = backStackEntry.arguments?.getInt("categoriaId") ?: 0
+                            val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
+
                             ProdutosScreen(
+                                categoriaId = categoriaId,
+                                idUsuario = idUsuario,
+                                navController = navController
+                            )
+
+                        }
+                        composable(
+                            route = "categorias/{idUsuario}",
+                            arguments = listOf(
+                                navArgument("idUsuario") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
+                            CategoriasScreen(
                                 navController = navController,
+                                idUsuario = idUsuario,
                                 onLogoutClick = {
                                     navController.navigate("login"){
                                         popUpTo("home") { inclusive = true }
@@ -116,11 +158,13 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable("categorias") {
-                            CategoriasScreen()
-                        }
-                        composable("pedidos") {
-                            PedidosScreen()
+                        composable("pedidos/{id_usuario}") { backStackEntry ->
+                            val idUsuario = backStackEntry.arguments?.getString("id_usuario") ?: ""
+                            val pedidoConfirmado = backStackEntry
+                                .savedStateHandle
+                                .get<List<Produto>>("pedidoConfirmado")
+
+                            PedidosScreen(pedidoConfirmado = pedidoConfirmado, idUsuario = idUsuario,)
                         }
                     }
                 }

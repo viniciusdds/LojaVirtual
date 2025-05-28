@@ -15,6 +15,46 @@
         android:theme="@style/Theme.LojaVirtual"
         tools:targetApi="31">
         <activity
+            android:name=".viewmodel.ProdutoViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_produto_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.UsuarioViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_usuario_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.PedidoViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".repository.PedidoRepository"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_repository"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.PedidoRequest"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_request"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".utils.CarrinhoDrawerContent"
+            android:exported="false"
+            android:label="@string/title_activity_carrinho_drawer_content"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.PedidoData"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_data"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.Categoria"
+            android:exported="false"
+            android:label="@string/title_activity_categoria"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
             android:name=".viewmodel.ProdutoViewModel"
             android:exported="false"
             android:label="@string/title_activity_produto_view_model"
