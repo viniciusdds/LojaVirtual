@@ -42,6 +42,7 @@ import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.ProdutoRepository
 import br.com.aurora.lojavirtual.viewmodel.PedidoViewModel
 import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
+import coil.compose.AsyncImage
 import com.seuapp.viewmodel.PedidoViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,9 +59,6 @@ fun ProdutosScreen(
     val produtos = produtoViewModel.produtos
     val totalItens = produtoViewModel.quantidadeTotal()
 
-
-
-
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
     val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -74,7 +72,7 @@ fun ProdutosScreen(
 
     // Carregar produtos ao abrir ou quando categoria mudar
     LaunchedEffect(categoriaId) {
-        produtoViewModel.carregarProdutos(categoriaId)
+        produtoViewModel.carregarProdutos(categoriaId = if (categoriaId == 0) null else categoriaId)
     }
 
     Box {
@@ -154,85 +152,105 @@ fun ProdutosScreen(
             },
             containerColor = Color(0xFFFFFFFF)
         ){ innerPadding  ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(8.dp)
-                    .background(Color.White)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+         if(produtoViewModel.isLoading){
+             Box(
+                 modifier = Modifier
+                     .fillMaxSize()
+                     .padding(innerPadding),
+                 contentAlignment = Alignment.Center
+             ) {
+                 CircularProgressIndicator(color = Color(0xFF9932CC))
+             }
+         }else{
+             LazyVerticalGrid(
+                 columns = GridCells.Fixed(2),
+                 modifier = Modifier
+                     .padding(innerPadding)
+                     .padding(8.dp)
+                     .background(Color.White)
+                     .fillMaxSize(),
+                 contentPadding = PaddingValues(8.dp),
+                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                 horizontalArrangement = Arrangement.spacedBy(8.dp)
+             ) {
 
-                items(produtos){ produto  ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable{
-                                produtoSelecionado = produto
-                            },
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF9932CC) // Cor do TopBar
-                        ),
-                        elevation = CardDefaults.cardElevation(12.dp)
-                    ){
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .background(Color.White)
-                                .clickable {
-                                    produtoSelecionado = produto
-                                },
-                            contentAlignment = Alignment.Center
-                        ){
-                            Image(
-                                painter = painterResource(id = produto.imagemResId),
-                                contentDescription = produto.nome,
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .background(Color.White)
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
-                            Text(produto.nome, style = MaterialTheme.typography.titleMedium)
-                            Text("R$ ${produto.preco}", style =  MaterialTheme.typography.bodyMedium)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                IconButton(
-                                    onClick = {
-                                       produtoViewModel.removerQuantidade(produto)
-                                    },
-                                    enabled = produto.quantidade > 0
-                                ) {
-                                    Icon(Icons.Default.Remove, contentDescription = "Remover")
-                                  }
+                 items(produtos){ produto  ->
+                     Card(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .clickable{
+                                 produtoSelecionado = produto
+                             },
+                         colors = CardDefaults.cardColors(
+                             containerColor = Color(0xFF9932CC) // Cor do TopBar
+                         ),
+                         elevation = CardDefaults.cardElevation(12.dp)
+                     ){
+                         Box(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .height(100.dp)
+                                 .background(Color.White)
+                                 .clickable {
+                                     produtoSelecionado = produto
+                                 },
+                             contentAlignment = Alignment.Center
+                         ){
+//                            Image(
+//                                painter = painterResource(id = produto.imagemUrl),
+//                                contentDescription = produto.produto,
+//                                modifier = Modifier
+//                                    .height(100.dp)
+//                                    .background(Color.White)
+//                                    .fillMaxWidth(),
+//                                contentScale = ContentScale.Crop
+//                            )
+                             AsyncImage(
+                                 model = produto.imagemUrl,
+                                 contentDescription = produto.produto,
+                                 modifier = Modifier
+                                     .background(Color.White)
+                                     .height(100.dp)
+                                     .fillMaxWidth(),
+                                 contentScale = ContentScale.Crop
+                             )
+                         }
+                         Column(
+                             modifier = Modifier.padding(8.dp),
+                             horizontalAlignment = Alignment.CenterHorizontally
+                         ){
+                             Text(produto.produto, style = MaterialTheme.typography.titleMedium)
+                             Text("R$ ${produto.preco}", style =  MaterialTheme.typography.bodyMedium)
+                             Spacer(modifier = Modifier.height(8.dp))
+                             Row(
+                                 modifier = Modifier.fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.SpaceAround,
+                                 verticalAlignment = Alignment.CenterVertically
+                             ){
+                                 IconButton(
+                                     onClick = {
+                                         produtoViewModel.removerQuantidade(produto)
+                                     },
+                                     enabled = produto.quantidade > 0
+                                 ) {
+                                     Icon(Icons.Default.Remove, contentDescription = "Remover")
+                                 }
 
-                                Text(produto.quantidade.toString())
+                                 Text(produto.quantidade.toString())
 
-                                IconButton(
-                                    onClick = {
-                                       produtoViewModel.adicionarQuantidade(produto)
-                                    }
-                                ) {
-                                    Icon(Icons.Default.Add, contentDescription = "Adicionar")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                                 IconButton(
+                                     onClick = {
+                                         produtoViewModel.adicionarQuantidade(produto)
+                                     }
+                                 ) {
+                                     Icon(Icons.Default.Add, contentDescription = "Adicionar")
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
 
             // Modal com imagem ampliada
             produtoSelecionado?.let { produto ->
@@ -280,20 +298,33 @@ fun ProdutosScreen(
                                         )
                                     }
                                 }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+//                            Image(
+//                                painter = painterResource(id = produto.imagemUrl),
+//                                contentDescription = "Imagem Ampliada",
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    //.aspectRatio(1f)
+//                                    .height(500.dp)
+//                                    .padding(16.dp),
+//                                contentScale = ContentScale.Fit
+//                            )
+
+                                AsyncImage(
+                                    model = produto.imagemUrl,
+                                    contentDescription = produto.produto,
+                                    modifier = Modifier
+                                        .height(500.dp)
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    contentScale = ContentScale.Fit
+                                )
+
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
 
-                            Image(
-                                painter = painterResource(id = produto.imagemResId),
-                                contentDescription = "Imagem Ampliada",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    //.aspectRatio(1f)
-                                    .height(500.dp)
-                                    .padding(16.dp),
-                                contentScale = ContentScale.Fit
-                            )
                         }
                     }
                 }
@@ -342,7 +373,7 @@ fun ProdutosScreen(
                             onClick = {
                                 // Ação de confirmar pedido
                                 val itensCarrinho = produtoViewModel.confirmarPedido()
-                                pedidoViewModel.confirmarPedido(idUsuario = idUsuario, itens = itensCarrinho)
+                                pedidoViewModel.confirmarPedido(idUsuario = idUsuario, itens = itensCarrinho, navController = navController)
 
                                 rightDrawerOpened = false
                             },

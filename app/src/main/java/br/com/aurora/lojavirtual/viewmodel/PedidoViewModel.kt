@@ -3,6 +3,7 @@ package br.com.aurora.lojavirtual.viewmodel
 import PedidoRepository
 import PedidoRequest
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.aurora.lojavirtual.model.ItemPedido
 import br.com.aurora.lojavirtual.model.PedidoCompleto
 import br.com.aurora.lojavirtual.model.PedidoItemResponse
@@ -32,7 +35,8 @@ class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
-    fun confirmarPedido(idUsuario: String, itens: List<ItemCarrinho>){
+
+    fun confirmarPedido(idUsuario: String, itens: List<ItemCarrinho>, navController: NavController){
         viewModelScope.launch {
             try{
                 val pedido = PedidoRequest(
@@ -45,6 +49,7 @@ class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
                     _resposta.value = response.body()?.mensagem ?: "Pedido confirmado"
                     Log.d("Pedido", "Código do pedido: ${response.body()?.codigoPedido}")
                     Log.d("Debug", "ID do usuário: $pedido")
+                    navController.navigate("pedidos/${idUsuario}")
                 }else{
                     _resposta.value = "Erro ${response.code()}"
                 }

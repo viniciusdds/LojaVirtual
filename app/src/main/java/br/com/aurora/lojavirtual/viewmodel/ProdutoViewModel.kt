@@ -1,12 +1,12 @@
 package br.com.aurora.lojavirtual.viewmodel
 
-import PedidoRequest
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import br.com.aurora.lojavirtual.R
 import br.com.aurora.lojavirtual.model.ItemCarrinho
 import br.com.aurora.lojavirtual.model.Produto
 import br.com.aurora.lojavirtual.repository.ProdutoRepository
@@ -19,39 +19,38 @@ class ProdutoViewModel(private val repository: ProdutoRepository) : ViewModel() 
     private val _produtos = mutableStateListOf<Produto>()
     val produtos: List<Produto> get() = _produtos
 
+    var isLoading by mutableStateOf(false)
+        private set
+    var errorMessage by mutableStateOf<String?>(null)
+
     private val _resposta = MutableStateFlow<String?>(null)
     val resposta: StateFlow<String?> = _resposta
 
-//    Para pegar a lista da API
-//    fun carregarProdutos(categoriaId: Int?) {
-//        viewModelScope.launch {
-//            val produtosDaApi = repository.buscarProdutos(categoriaId)
-//            _produtos.clear()
-//            _produtos.addAll(produtosDaApi)
-//        }
-//    }
-
+    // Para pegar a lista da API
     fun carregarProdutos(categoriaId: Int?){
-        _produtos.clear()
-        val lista = listOf(
-            Produto(1, "Camisa Polo", R.drawable.produto1, 59.90, categoriaId = 2),
-            Produto(2, "Tênis Esportivo", R.drawable.produto2, 189.90, categoriaId = 2),
-            Produto(3, "Calça Jeans", R.drawable.produto3, 129.90, categoriaId = 2),
-            Produto(4, "Boné Estiloso", R.drawable.produto4, 49.90, categoriaId = 2),
-            Produto(5, "Celular", R.drawable.produto5, 139.90, categoriaId = 1),
-            Produto(6, "NoteBook", R.drawable.produto6, 3500.90, categoriaId = 1),
-            Produto(7, "Harry Potter", R.drawable.produto7, 300.90, categoriaId = 3),
-            Produto(8, "Educativo", R.drawable.produto8, 100.00, categoriaId = 3),
-            Produto(9, "Bolacha Trakinas", R.drawable.produto9, 6.90, categoriaId = 4)
-        )
+        viewModelScope.launch {
+            isLoading = true
+            errorMessage = null
+            try{
+                val bruta = repository.getProdutos(categoriaId)
+                Log.d("ProdutosBrutos", "Recebido: ${bruta.size} itens")
 
-        val produtosFiltrados = if(categoriaId == null || categoriaId == 0){
-            lista
-        }else{
-            lista.filter { it.categoriaId == categoriaId }
+                val lista = repository.getProdutos(categoriaId)
+
+                Log.d("ListaP", "ID do usuário: $lista - $categoriaId")
+
+                _produtos.clear()
+                _produtos.addAll(lista)
+
+            }catch (e: Exception){
+                Log.e("ProdutoViewModel", "Erro ao carregar produtos", e)
+                errorMessage = "Erro ao carregar produtos: ${e.message}"
+            } finally {
+                isLoading = false
+            }
         }
-        _produtos.addAll(produtosFiltrados)
     }
+
 
     fun confirmarPedido(): List<ItemCarrinho>{
         val itensCarrinho = produtos.filter {
@@ -59,7 +58,7 @@ class ProdutoViewModel(private val repository: ProdutoRepository) : ViewModel() 
         }.map { produto ->
             ItemCarrinho(
                 id = produto.id,
-                nome = produto.nome,
+                nome = produto.produto,
                 quantidade = produto.quantidade,
                 preco = produto.quantidade * produto.preco // preco total de cada item
             )

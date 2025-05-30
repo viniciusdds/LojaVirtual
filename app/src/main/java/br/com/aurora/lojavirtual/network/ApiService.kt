@@ -33,8 +33,8 @@ interface ApiService {
         @Field("email") email: String
     ): UsuarioResponse
 
-    @GET("produtos")
-    suspend fun getProdutos(): List<Produto>
+    @GET("produtos.php")
+    suspend fun getProdutos(@Query("categoria_id") categoriaId: Int?): List<Produto>
 
     @POST("salvar_pedido.php")
     suspend fun salvarPedido(@Body pedido: PedidoRequest): Response<Unit>

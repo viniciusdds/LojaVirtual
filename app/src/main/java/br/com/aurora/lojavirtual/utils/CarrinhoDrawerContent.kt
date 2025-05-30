@@ -46,7 +46,7 @@ fun CarrinhoDrawerContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         carrinho.filter { it.quantidade > 0 }.forEach { produto ->
-            Text("${produto.nome} x${produto.quantidade} - R$ ${"%.2f".format(produto.preco * produto.quantidade)}")
+            Text("${produto.produto} x${produto.quantidade} - R$ ${"%.2f".format(produto.preco * produto.quantidade)}")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

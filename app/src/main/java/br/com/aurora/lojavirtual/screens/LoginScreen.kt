@@ -85,19 +85,19 @@ fun LoginScreen( loginViewModel: LoginViewModel, onLoginSuccess: (Usuario) -> Un
 
         Button(
             onClick = {
-                if (!Validator.isEmailValid(email)) {
+                if (!Validator.isEmailValid(email.trim())) {
                     errorMessage = "E-mail inválido"
                     loginViewModel.limparMensagem()
                     return@Button
                 }
 
-                if (!Validator.isPasswordStrong(senha)) {
+                if (!Validator.isPasswordStrong(senha.trim())) {
                     errorMessage = "Senha fraca: mínimo 6 caracteres, letra e número"
                     loginViewModel.limparMensagem()
                     return@Button
                 }
 
-                loginViewModel.login(email, senha, { usuario ->
+                loginViewModel.login(email.trim(), senha.trim(), { usuario ->
                     if(usuario != null){
                         onLoginSuccess(usuario)
                     }else{
