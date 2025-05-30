@@ -15,6 +15,36 @@
         android:theme="@style/Theme.LojaVirtual"
         tools:targetApi="31">
         <activity
+            android:name=".model.PedidoItemResponse"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_item_response"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.Pedido"
+            android:exported="false"
+            android:label="@string/title_activity_pedido"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.PedidoViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.ItemCarrinho"
+            android:exported="false"
+            android:label="@string/title_activity_item_carrinho"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.PedidoResponse"
+            android:exported="false"
+            android:label="@string/title_activity_pedido_response"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.ItemPedidoRequest"
+            android:exported="false"
+            android:label="@string/title_activity_item_pedido_request"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
             android:name=".viewmodel.ProdutoViewModelFactory"
             android:exported="false"
             android:label="@string/title_activity_produto_view_model_factory"

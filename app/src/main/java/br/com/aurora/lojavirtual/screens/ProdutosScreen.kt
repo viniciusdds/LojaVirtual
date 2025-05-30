@@ -1,5 +1,6 @@
 package br.com.aurora.lojavirtual.screens
 
+import PedidoRepository
 import ProdutoViewModelFactory
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
@@ -36,9 +37,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import br.com.aurora.lojavirtual.model.ItemCarrinho
 import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.ProdutoRepository
+import br.com.aurora.lojavirtual.viewmodel.PedidoViewModel
 import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
+import com.seuapp.viewmodel.PedidoViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,10 +56,19 @@ fun ProdutosScreen(
 
     val produtoViewModel: ProdutoViewModel = viewModel(factory = viewModelFactory)
     val produtos = produtoViewModel.produtos
+    val totalItens = produtoViewModel.quantidadeTotal()
+
+
+
+
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
     val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var rightDrawerOpened by remember { mutableStateOf(false) }
+
+    val pedidoViewModel: PedidoViewModel = viewModel(
+        factory = PedidoViewModelFactory(PedidoRepository(RetrofitInstance.api))
+    )
 
     Log.d("ProdutoScreen", "Usuário recebido: ${idUsuario ?: "null"}")
 
@@ -92,7 +105,7 @@ fun ProdutosScreen(
                     }
 
                     TextButton(onClick = {
-                        navController.navigate("pedidos")
+                        navController.navigate("pedidos/${idUsuario}")
                         scope.launch { leftDrawerState.close() }
                     }) {
                         Text("Meus Pedidos")
@@ -328,6 +341,9 @@ fun ProdutosScreen(
                         Button(
                             onClick = {
                                 // Ação de confirmar pedido
+                                val itensCarrinho = produtoViewModel.confirmarPedido()
+                                pedidoViewModel.confirmarPedido(idUsuario = idUsuario, itens = itensCarrinho)
+
                                 rightDrawerOpened = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White)

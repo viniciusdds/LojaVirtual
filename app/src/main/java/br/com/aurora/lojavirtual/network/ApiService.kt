@@ -1,6 +1,10 @@
 package br.com.aurora.lojavirtual.network
 
 import PedidoRequest
+import br.com.aurora.lojavirtual.model.ItemPedido
+import br.com.aurora.lojavirtual.model.PedidoCompleto
+import br.com.aurora.lojavirtual.model.PedidoItemResponse
+import br.com.aurora.lojavirtual.model.PedidoResponse
 import br.com.aurora.lojavirtual.model.Produto
 import br.com.aurora.lojavirtual.model.Usuario
 import br.com.aurora.lojavirtual.model.UsuarioResponse
@@ -10,6 +14,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("cadastrar.php") // ajuste conforme o nome correto
@@ -33,4 +38,10 @@ interface ApiService {
 
     @POST("salvar_pedido.php")
     suspend fun salvarPedido(@Body pedido: PedidoRequest): Response<Unit>
+
+    @POST("confirmar_pedido.php")
+    suspend fun confirmarPedido(@Body pedido: PedidoRequest): Response<PedidoResponse>
+
+    @GET("buscar_pedidos.php")
+    suspend fun buscarPedidosPorUsuario(@Query("id_usuario") idUsuario: String): List<ItemPedido>
 }

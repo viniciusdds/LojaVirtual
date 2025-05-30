@@ -1,10 +1,13 @@
 package br.com.aurora.lojavirtual.viewmodel
 
+import PedidoRequest
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import br.com.aurora.lojavirtual.R
+import br.com.aurora.lojavirtual.model.ItemCarrinho
 import br.com.aurora.lojavirtual.model.Produto
 import br.com.aurora.lojavirtual.repository.ProdutoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +18,9 @@ class ProdutoViewModel(private val repository: ProdutoRepository) : ViewModel() 
 
     private val _produtos = mutableStateListOf<Produto>()
     val produtos: List<Produto> get() = _produtos
+
+    private val _resposta = MutableStateFlow<String?>(null)
+    val resposta: StateFlow<String?> = _resposta
 
 //    Para pegar a lista da API
 //    fun carregarProdutos(categoriaId: Int?) {
@@ -47,10 +53,19 @@ class ProdutoViewModel(private val repository: ProdutoRepository) : ViewModel() 
         _produtos.addAll(produtosFiltrados)
     }
 
-    fun confirmarPedido(): List<Produto>{
-        val itens = produtos.filter { it.quantidade > 0 }
+    fun confirmarPedido(): List<ItemCarrinho>{
+        val itensCarrinho = produtos.filter {
+            it.quantidade > 0
+        }.map { produto ->
+            ItemCarrinho(
+                id = produto.id,
+                nome = produto.nome,
+                quantidade = produto.quantidade,
+                preco = produto.quantidade * produto.preco // preco total de cada item
+            )
+        }
         produtos.forEach { it.quantidade = 0 }
-        return itens
+        return itensCarrinho
     }
 
     fun adicionarQuantidade(produto: Produto){

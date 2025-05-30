@@ -1,6 +1,5 @@
 package br.com.aurora.lojavirtual
 
-import ProdutoViewModelFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,9 +17,7 @@ import br.com.aurora.lojavirtual.screens.LoginScreen
 import br.com.aurora.lojavirtual.ui.theme.LojaVirtualTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import br.com.aurora.lojavirtual.model.Pedido
 import br.com.aurora.lojavirtual.model.Produto
-import br.com.aurora.lojavirtual.model.Usuario
 import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.UsuarioRepository
 import br.com.aurora.lojavirtual.screens.CategoriasScreen
@@ -36,11 +33,8 @@ import br.com.aurora.lojavirtual.viewmodel.RedefinirSenhaViewModel
 import br.com.aurora.lojavirtual.viewmodel.RedefinirSenhaViewModelFactory
 import br.com.aurora.lojavirtual.viewmodel.UsuarioViewModel
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import br.com.aurora.lojavirtual.repository.ProdutoRepository
-import br.com.aurora.lojavirtual.viewmodel.ProdutoViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,11 +154,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("pedidos/{id_usuario}") { backStackEntry ->
                             val idUsuario = backStackEntry.arguments?.getString("id_usuario") ?: ""
-                            val pedidoConfirmado = backStackEntry
-                                .savedStateHandle
-                                .get<List<Produto>>("pedidoConfirmado")
-
-                            PedidosScreen(pedidoConfirmado = pedidoConfirmado, idUsuario = idUsuario,)
+                            PedidosScreen(idUsuario = idUsuario, navController = navController)
                         }
                     }
                 }

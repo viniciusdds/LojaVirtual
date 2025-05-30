@@ -65,7 +65,8 @@ fun HomeScreen(
                     }
 
                     TextButton(onClick = {
-                        navController.navigate("pedidos")
+                        val idUsuario = usuario?.id_usuario ?: ""
+                        navController.navigate("pedidos/${idUsuario}")
                         scope.launch { drawerState.close() }
                     }) {
                         Text("Meus Pedidos")

@@ -89,7 +89,7 @@ fun CategoriasScreen(navController: NavController, idUsuario: String, onLogoutCl
                     }
 
                     TextButton(onClick = {
-                        navController.navigate("pedidos")
+                        navController.navigate("pedidos/${idUsuario}")
                         scope.launch { drawerState.close() }
                     }) {
                         Text("Meus Pedidos")

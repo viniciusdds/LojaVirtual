@@ -36,4 +36,10 @@
     <string name="title_activity_pedido_view_model">PedidoViewModel</string>
     <string name="title_activity_usuario_view_model">UsuarioViewModel</string>
     <string name="title_activity_produto_view_model_factory">ProdutoViewModelFactory</string>
+    <string name="title_activity_item_pedido_request">ItemPedidoRequest</string>
+    <string name="title_activity_pedido_response">PedidoResponse</string>
+    <string name="title_activity_item_carrinho">ItemCarrinho</string>
+    <string name="title_activity_pedido_view_model_factory">PedidoViewModelFactory</string>
+    <string name="title_activity_pedido">Pedido</string>
+    <string name="title_activity_pedido_item_response">PedidoItemResponse</string>
 </resources>

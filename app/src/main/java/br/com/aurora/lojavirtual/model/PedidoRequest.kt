@@ -1,11 +1,10 @@
-data class PedidoRequest(
-    val codigo: String,
-    val cpfUsuario: String,
-    val total: Double,
-    val itens: List<ItemPedidoRequest>
-)
+import br.com.aurora.lojavirtual.model.ItemCarrinho
+import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-data class ItemPedidoRequest(
-    val idProduto: Int,
-    val quantidade: Int
+data class PedidoRequest(
+    @SerializedName("id_usuario") val id_usuario: String,
+    @SerializedName("itens") val itens: List<ItemCarrinho>
 )
