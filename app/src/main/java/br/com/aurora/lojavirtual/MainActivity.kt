@@ -17,7 +17,6 @@ import br.com.aurora.lojavirtual.screens.LoginScreen
 import br.com.aurora.lojavirtual.ui.theme.LojaVirtualTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import br.com.aurora.lojavirtual.model.Produto
 import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.UsuarioRepository
 import br.com.aurora.lojavirtual.screens.CategoriasScreen

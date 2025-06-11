@@ -4,6 +4,7 @@ import PedidoRequest
 import br.com.aurora.lojavirtual.model.ApiResponse
 import br.com.aurora.lojavirtual.model.DadosCompra
 import br.com.aurora.lojavirtual.model.ItemPedido
+import br.com.aurora.lojavirtual.model.PagamentoRequest
 import br.com.aurora.lojavirtual.model.PedidoCompleto
 import br.com.aurora.lojavirtual.model.PedidoItemResponse
 import br.com.aurora.lojavirtual.model.PedidoResponse
@@ -64,9 +65,8 @@ interface ApiService {
         @Body dadosCompra: DadosCompra
     ): Response<ApiResponse>
 
-    @FormUrlEncoded
     @POST("efetuar_pagamento.php")
     suspend fun efetuarPagamento(
-        @Field("id_pedido") idPedido: String
+        @Body request: PagamentoRequest
     ): Response<ApiResponse>
 }

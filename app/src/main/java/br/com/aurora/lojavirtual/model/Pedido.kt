@@ -25,3 +25,13 @@ data class PedidoCompleto(
     val status: StatusPedido = StatusPedido.PENDENTE,
     var selecionado: Boolean = false
 )
+
+data class Pedidos(
+    val codigo: String,  // Ex: PED_683dba0d58721
+    val valor: Double,   // Ex: 13.8
+    val descricao: String
+)
+
+data class PagamentoRequest(
+    val pedidos: List<Pedidos>
+)
