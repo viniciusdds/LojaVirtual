@@ -35,6 +35,9 @@ import br.com.aurora.lojavirtual.viewmodel.UsuarioViewModel
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import br.com.aurora.lojavirtual.screens.DadosCompraScreen
+import br.com.aurora.lojavirtual.screens.DetalhesPedidosScreen
+import br.com.aurora.lojavirtual.screens.PagamentoScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +158,35 @@ class MainActivity : ComponentActivity() {
                         composable("pedidos/{id_usuario}") { backStackEntry ->
                             val idUsuario = backStackEntry.arguments?.getString("id_usuario") ?: ""
                             PedidosScreen(idUsuario = idUsuario, navController = navController)
+                        }
+                        composable(
+                            "detalhes_pedidos/{idsPedidos}",
+                            arguments = listOf(navArgument("idsPedidos") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val ids = backStackEntry.arguments?.getString("idsPedidos") ?: ""
+                            DetalhesPedidosScreen(ids, navController)
+                        }
+                        composable(
+                            route = "dados_compra/{pedidosIds}",
+                            arguments = listOf(navArgument("pedidosIds") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val pedidosIds = backStackEntry.arguments?.getString("pedidosIds") ?: ""
+                            DadosCompraScreen(pedidosIds = pedidosIds, navController = navController)
+                        }
+                        composable(
+                            route = "pagamento/{formaPagamento}/{pedidosIds}",
+                            arguments = listOf(
+                                navArgument("formaPagamento") { type = NavType.StringType },
+                                navArgument("pedidosIds") { type = NavType.StringType }
+                            )
+                        ){ backStackEntry ->
+                            val formaPagamento = backStackEntry.arguments?.getString("formaPagamento") ?: ""
+                            val idsPedidos = backStackEntry.arguments?.getString("pedidosIds") ?: ""
+                            PagamentoScreen(
+                                formaPagamento = formaPagamento,
+                                idsPedidos = idsPedidos,
+                                navController = navController
+                            )
                         }
                     }
                 }

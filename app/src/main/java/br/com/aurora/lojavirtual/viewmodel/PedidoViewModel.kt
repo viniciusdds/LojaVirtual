@@ -3,9 +3,7 @@ package br.com.aurora.lojavirtual.viewmodel
 import PedidoRepository
 import PedidoRequest
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.aurora.lojavirtual.model.ItemCarrinho
@@ -14,13 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import br.com.aurora.lojavirtual.model.ItemPedido
 import br.com.aurora.lojavirtual.model.PedidoCompleto
-import br.com.aurora.lojavirtual.model.PedidoItemResponse
+import br.com.aurora.lojavirtual.model.StatusPedido
 
 class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
     private val _resposta = MutableStateFlow<String?>(null)
@@ -35,6 +29,31 @@ class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
+    // Adicione um StateFlow para controlar os pedidos selecionados
+    private val _pedidosSelecionados = MutableStateFlow<Set<String>>(emptySet())
+    val pedidosSelecionados: StateFlow<Set<String>> = _pedidosSelecionados.asStateFlow()
+
+    // Adicione um StateFlow para o Snackbar
+    private val _showSnackbar = MutableStateFlow(false)
+    val showSnackbar = _showSnackbar.asStateFlow()
+
+    // Função para alternar seleção do pedido
+    fun toggleSelecaoPedido(codigoPedido: String) {
+        _pedidosSelecionados.value = if (codigoPedido in _pedidosSelecionados.value) {
+            _pedidosSelecionados.value - codigoPedido
+        } else {
+            _pedidosSelecionados.value + codigoPedido
+        }
+    }
+
+    // Adicione esta função no seu PedidoViewModel
+    fun getIdsSelecionadosParaNavegacao(pedidos: List<PedidoCompleto>): String {
+        return pedidos.filter { _pedidosSelecionados.value.contains(it.codigo) }
+            .joinToString(",") { pedido ->
+                val itensStr = pedido.itens.joinToString(";") { it.produto }
+                "${pedido.codigo}-${pedido.total}-$itensStr"
+            }
+    }
 
     fun confirmarPedido(idUsuario: String, itens: List<ItemCarrinho>, navController: NavController){
         viewModelScope.launch {
@@ -75,7 +94,15 @@ class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
                         codigo = codigo,
                         dataPedido = dataPedido,
                         total = total,
-                        itens = itens
+                        itens = itens,
+                        status = when(itens.first().status){
+                            "A" -> StatusPedido.PENDENTE
+                            "P" -> StatusPedido.PAGO
+                            "E" -> StatusPedido.ENVIADO
+                            "D" -> StatusPedido.ENTREGUE
+                            "C" -> StatusPedido.CANCELADO
+                            else -> StatusPedido.PENDENTE
+                        }
                     )
                 }
 
@@ -86,6 +113,46 @@ class PedidoViewModel(private val repository: PedidoRepository) : ViewModel() {
                 _errorMessage.value = e.message
             }finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun StatusPedido.corStatus(): Color {
+        return when (this){
+            StatusPedido.PENDENTE -> Color(0xFF8A2BE2)
+            StatusPedido.PAGO -> Color.Blue
+            StatusPedido.ENVIADO -> Color(0xFFFF8C00)
+            StatusPedido.ENTREGUE -> Color.Green
+            StatusPedido.CANCELADO -> Color.Red
+        }
+    }
+
+    fun cancelarPedido(idPedido: String, idUsuario: String, onResult: (Boolean) -> Unit){
+        viewModelScope.launch {
+
+            try{
+                val sucesso = repository.cancelarPedido(idPedido)
+                if(sucesso){
+                    onResult(true)
+                }else{
+                    onResult(false)
+                }
+            }catch (e: Exception){
+                onResult(false)
+            }
+        }
+    }
+
+    fun finalizarPedido(idPedido: String, idUsuario: String){
+        viewModelScope.launch {
+
+            try{
+                val sucesso = repository.finalizarPedido(idPedido)
+                if(sucesso){
+                   carregarPedidos(idUsuario)
+                }
+            }catch (e: Exception){
+                _errorMessage.value = e.message
             }
         }
     }

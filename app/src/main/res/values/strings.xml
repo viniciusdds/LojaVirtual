@@ -42,4 +42,18 @@
     <string name="title_activity_pedido_view_model_factory">PedidoViewModelFactory</string>
     <string name="title_activity_pedido">Pedido</string>
     <string name="title_activity_pedido_item_response">PedidoItemResponse</string>
+    <string name="title_activity_api_response">ApiResponse</string>
+    <string name="title_activity_via_cep_retrofit_instance">ViaCepRetrofitInstance</string>
+    <string name="title_activity_via_cep_service">ViaCepService</string>
+    <string name="title_activity_via_cep_response">ViaCepResponse</string>
+    <string name="title_activity_endereco_view_model">EnderecoViewModel</string>
+    <string name="title_activity_endereco_screen">EnderecoScreen</string>
+    <string name="title_activity_detalhes_pedidos_screen">DetalhesPedidosScreen</string>
+    <string name="title_activity_endereco_api">EnderecoAPI</string>
+    <string name="title_activity_dados_repository">DadosRepository</string>
+    <string name="title_activity_endereco_view_model_factory">EnderecoViewModelFactory</string>
+    <string name="title_activity_pagamento_screen">PagamentoScreen</string>
+    <string name="title_activity_pagamento_view_model">PagamentoViewModel</string>
+    <string name="title_activity_pagamento_repository">PagamentoREpository</string>
+    <string name="title_activity_pagamento_view_model_factory">PagamentoViewModelFactory</string>
 </resources>

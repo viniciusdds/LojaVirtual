@@ -1,6 +1,8 @@
 package br.com.aurora.lojavirtual.network
 
 import PedidoRequest
+import br.com.aurora.lojavirtual.model.ApiResponse
+import br.com.aurora.lojavirtual.model.DadosCompra
 import br.com.aurora.lojavirtual.model.ItemPedido
 import br.com.aurora.lojavirtual.model.PedidoCompleto
 import br.com.aurora.lojavirtual.model.PedidoItemResponse
@@ -44,4 +46,27 @@ interface ApiService {
 
     @GET("buscar_pedidos.php")
     suspend fun buscarPedidosPorUsuario(@Query("id_usuario") idUsuario: String): List<ItemPedido>
+
+    @FormUrlEncoded
+    @POST("cancelar_pedido.php")
+    suspend fun cancelarPedido(
+        @Field("id_pedido") id: String
+    ): Response<ApiResponse>
+
+    @FormUrlEncoded
+    @POST("finalizar_pedido.php")
+    suspend fun finalizarPedido(
+        @Field("id_pedido") id: String
+    ): Response<ApiResponse>
+
+    @POST("dados_compra.php")
+    suspend fun enviarDadosCompra(
+        @Body dadosCompra: DadosCompra
+    ): Response<ApiResponse>
+
+    @FormUrlEncoded
+    @POST("efetuar_pagamento.php")
+    suspend fun efetuarPagamento(
+        @Field("id_pedido") idPedido: String
+    ): Response<ApiResponse>
 }

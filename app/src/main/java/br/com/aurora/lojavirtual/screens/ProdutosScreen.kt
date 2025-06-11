@@ -4,7 +4,6 @@ import PedidoRepository
 import ProdutoViewModelFactory
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,16 +27,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.filled.AddShoppingCart
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import br.com.aurora.lojavirtual.model.ItemCarrinho
 import br.com.aurora.lojavirtual.network.RetrofitInstance
 import br.com.aurora.lojavirtual.repository.ProdutoRepository
 import br.com.aurora.lojavirtual.viewmodel.PedidoViewModel
@@ -132,7 +128,9 @@ fun ProdutosScreen(
                             modifier = Modifier
                                 .padding(12.dp)
                                 .clickable{
-                                    rightDrawerOpened = true
+                                    if(totalItens > 0){
+                                        rightDrawerOpened = true
+                                    }
                                 }
                         ) {
                             Icon(Icons.Default.AddShoppingCart, contentDescription = "Carrinho")

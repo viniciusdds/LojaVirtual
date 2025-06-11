@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+
     // BOM do Jetpack Compose
     implementation("androidx.compose:compose-bom:2024.05.00")
 
@@ -69,11 +70,14 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    implementation("androidx.compose.foundation:foundation")
+
+    implementation("com.google.zxing:core:3.5.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
 
     implementation(libs.androidx.ui.graphics)

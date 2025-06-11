@@ -46,5 +46,8 @@ object Validator {
         return text.trim().isNotEmpty()
     }
 
-
+    fun isCepValid(cep: String): Boolean {
+        val cleanCep = cep.replace(Regex("[^\\d]"), "")
+        return cleanCep.length == 8
+    }
 }

@@ -15,6 +15,76 @@
         android:theme="@style/Theme.LojaVirtual"
         tools:targetApi="31">
         <activity
+            android:name=".viewmodel.PagamentoViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_pagamento_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".repository.PagamentoREpository"
+            android:exported="false"
+            android:label="@string/title_activity_pagamento_repository"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.PagamentoViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_pagamento_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.PagamentoScreen"
+            android:exported="false"
+            android:label="@string/title_activity_pagamento_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.EnderecoViewModelFactory"
+            android:exported="false"
+            android:label="@string/title_activity_endereco_view_model_factory"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".repository.DadosRepository"
+            android:exported="false"
+            android:label="@string/title_activity_dados_repository"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.EnderecoAPI"
+            android:exported="false"
+            android:label="@string/title_activity_endereco_api"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.DetalhesPedidosScreen"
+            android:exported="false"
+            android:label="@string/title_activity_detalhes_pedidos_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".screens.EnderecoScreen"
+            android:exported="false"
+            android:label="@string/title_activity_endereco_screen"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".viewmodel.EnderecoViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_endereco_view_model"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.ViaCepResponse"
+            android:exported="false"
+            android:label="@string/title_activity_via_cep_response"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.ViaCepService"
+            android:exported="false"
+            android:label="@string/title_activity_via_cep_service"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".network.ViaCepRetrofitInstance"
+            android:exported="false"
+            android:label="@string/title_activity_via_cep_retrofit_instance"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
+            android:name=".model.ApiResponse"
+            android:exported="false"
+            android:label="@string/title_activity_api_response"
+            android:theme="@style/Theme.LojaVirtual" />
+        <activity
             android:name=".model.PedidoItemResponse"
             android:exported="false"
             android:label="@string/title_activity_pedido_item_response"
